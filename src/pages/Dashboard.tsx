@@ -4,6 +4,7 @@ import { useBudgetStore } from '../store/useBudgetStore';
 import { formatCurrency, CATEGORIES, CAT_COLORS } from '../lib/utils';
 import { Card } from '../components/ui/Card';
 import { ProgressBar } from '../components/ui/ProgressBar';
+import { EmptyState } from '../components/ui/EmptyState';
 
 export function Dashboard() {
     const { transactions, debts, vacations, currency } = useBudgetStore();
@@ -56,6 +57,14 @@ export function Dashboard() {
                     </Card>
                 ))}
             </div>
+
+            {/* Empty State */}
+            {transactions.length === 0 && (
+                <EmptyState
+                    title="Welcome to BudgetJA!"
+                    description="You haven't added any transactions yet. Tap the '+' icon below to get started tracking your spending."
+                />
+            )}
 
             {/* Spending Breakdown Pie Chart */}
             {catData.length > 0 && (

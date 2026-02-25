@@ -79,7 +79,8 @@ export function AddTransaction() {
                                 value={amount}
                                 onChange={e => setAmount(e.target.value)}
                                 placeholder="0.00"
-                                type="number"
+                                type="text"
+                                inputMode="decimal"
                                 min="0"
                                 step="0.01"
                                 className="flex-1 py-3 text-sm outline-none bg-transparent text-textPrimary"

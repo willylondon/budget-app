@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
+import { AnimatePresence } from 'framer-motion';
 import { AppLayout } from './components/layout/AppLayout';
+import { PageTransition } from './components/layout/PageTransition';
 import type { PageType } from './components/layout/BottomNav';
 
 import { Dashboard } from './pages/Dashboard';
@@ -36,7 +38,11 @@ export default function App() {
         }}
       />
 
-      {renderPage()}
+      <AnimatePresence mode="wait">
+        <PageTransition pageKey={currentPage}>
+          {renderPage()}
+        </PageTransition>
+      </AnimatePresence>
 
     </AppLayout>
   );

@@ -3,6 +3,7 @@ import { useBudgetStore } from '../store/useBudgetStore';
 import { formatCurrency, CATEGORIES } from '../lib/utils';
 import { Search } from 'lucide-react';
 import { Input } from '../components/ui/Input';
+import { EmptyState } from '../components/ui/EmptyState';
 
 export function History() {
     const { transactions, removeTransaction, currency } = useBudgetStore();
@@ -65,7 +66,12 @@ export function History() {
                         </div>
                     </div>
                 ))}
-                {filtered.length === 0 && <div className="text-center py-12 text-sm text-textMuted">No transactions found</div>}
+                {filtered.length === 0 && (
+                    <EmptyState
+                        title="No Transactions"
+                        description="Try adjusting your filters or search terms, or add newly tracked items from the Dashboard."
+                    />
+                )}
             </div>
         </div>
     );

@@ -6,9 +6,13 @@
 
 @layer base {
   body {
-    @apply bg-background text-textPrimary font-sans antialiased;
+    @apply bg-background text-textPrimary h-full min-h-screen overflow-x-hidden antialiased;
+    font-family: "DM Sans", sans-serif;
+    background-image:
+      radial-gradient(circle at top left, rgba(249, 115, 22, 0.08) 0vw, transparent 50vw),
+      radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.05) 0vw, transparent 50vw);
+    background-attachment: fixed;
     margin: 0;
-    min-height: 100vh;
   }
 }
 
@@ -20,13 +24,26 @@ input[type=date]::-webkit-calendar-picker-indicator {
   filter: invert(0.5);
 }
 
+@layer utilities {
+  .glass-panel {
+    @apply bg-surface/60 backdrop-blur-xl border border-white/[0.05] shadow-xl;
+  }
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
+  height: 6px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #020617;
+  background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 2px;
+  @apply bg-surface rounded-full border border-border;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-textMuted;
 }
