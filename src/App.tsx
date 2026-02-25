@@ -12,15 +12,46 @@ import { VacationPage } from './pages/Vacation';
 import { History } from './pages/History';
 import { Settings } from './pages/Settings';
 import { Subscriptions } from './pages/Subscriptions';
+import { Auth } from './pages/Auth';
 import { useBudgetStore } from './store/useBudgetStore';
+import { supabase } from './lib/supabase';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageType>('Dashboard');
+  const [session, setSession] = useState<any>(null);
+  const [isSupabaseConfigured, setIsSupabaseConfigured] = useState(false);
   const processSubscriptions = useBudgetStore(state => state.processSubscriptions);
 
   useEffect(() => {
     processSubscriptions();
+
+    // Check if cloud mode is enabled
+    const configured = Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
+    setIsSupabaseConfigured(configured);
+
+    if (configured) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setSession(session);
+      });
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+      });
+
+      return () => subscription.unsubscribe();
+    }
   }, [processSubscriptions]);
+
+  if (isSupabaseConfigured && !session) {
+    return (
+      <>
+        <Toaster position="top-center" toastOptions={{ style: { background: '#1e293b', color: '#e2e8f0', border: '1px solid #334155' } }} />
+        <Auth />
+      </>
+    );
+  }
 
   const renderPage = () => {
     switch (currentPage) {
