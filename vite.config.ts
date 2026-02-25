@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'BudgetJA',
-        short_name: 'BudgetJA',
+        name: 'London Ledger',
+        short_name: 'London Ledger',
         description: 'A privacy-first, blazing fast personal finance tracker.',
         theme_color: '#0f172a',
         background_color: '#020617',

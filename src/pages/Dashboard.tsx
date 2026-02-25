@@ -61,7 +61,7 @@ export function Dashboard() {
             {/* Empty State */}
             {transactions.length === 0 && (
                 <EmptyState
-                    title="Welcome to BudgetJA!"
+                    title="Welcome to London Ledger!"
                     description="You haven't added any transactions yet. Tap the '+' icon below to get started tracking your spending."
                 />
             )}
