@@ -1,7 +1,7 @@
 export type TransactionType = 'income' | 'expense';
 
 export interface Transaction {
-    id: number;
+    id: string | number;
     type: TransactionType;
     name: string;
     amount: number;
@@ -13,7 +13,7 @@ export interface Transaction {
 export type DebtType = 'loan' | 'credit card';
 
 export interface Debt {
-    id: number;
+    id: string | number;
     type: DebtType;
     name: string;
     balance: number;
@@ -25,7 +25,7 @@ export interface Debt {
 }
 
 export interface Vacation {
-    id: number;
+    id: string | number;
     name: string;
     goal: number;
     saved: number;
@@ -36,7 +36,7 @@ export interface Vacation {
 export type SubFrequency = 'monthly' | 'yearly' | 'weekly';
 
 export interface Subscription {
-    id: number;
+    id: string | number;
     name: string;
     amount: number;
     category: string;

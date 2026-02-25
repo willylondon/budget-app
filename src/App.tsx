@@ -20,7 +20,9 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<PageType>('Dashboard');
   const [session, setSession] = useState<any>(null);
   const [isSupabaseConfigured, setIsSupabaseConfigured] = useState(false);
+
   const processSubscriptions = useBudgetStore(state => state.processSubscriptions);
+  const fetchCloudData = useBudgetStore(state => state.fetchCloudData);
 
   useEffect(() => {
     processSubscriptions();
@@ -32,17 +34,19 @@ export default function App() {
     if (configured) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         setSession(session);
+        if (session) fetchCloudData();
       });
 
       const {
         data: { subscription },
       } = supabase.auth.onAuthStateChange((_event, session) => {
         setSession(session);
+        if (session) fetchCloudData();
       });
 
       return () => subscription.unsubscribe();
     }
-  }, [processSubscriptions]);
+  }, [processSubscriptions, fetchCloudData]);
 
   if (isSupabaseConfigured && !session) {
     return (

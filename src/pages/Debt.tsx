@@ -113,7 +113,7 @@ export function DebtPage() {
     );
 }
 
-function DebtCard({ debt, currency, rank, onRemove, onPayment }: { debt: Debt; currency: 'JMD' | 'USD'; rank: number; onRemove: (id: number) => void; onPayment: (id: number, amount: number) => void }) {
+function DebtCard({ debt, currency, rank, onRemove, onPayment }: { debt: Debt; currency: 'JMD' | 'USD'; rank: number; onRemove: (id: string | number) => void; onPayment: (id: string | number, amount: number) => void }) {
     const [payment, setPayment] = useState("");
     const [expand, setExpand] = useState(false);
 

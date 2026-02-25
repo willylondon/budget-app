@@ -65,7 +65,7 @@ export function VacationPage() {
     );
 }
 
-function VacCard({ vac, pct, remaining, weeklyTarget, currency, onRemove, onSave }: { vac: Vacation, pct: number, remaining: number, weeklyTarget: number | null, currency: 'JMD' | 'USD', onRemove: (id: number) => void, onSave: (id: number, amt: number) => void }) {
+function VacCard({ vac, pct, remaining, weeklyTarget, currency, onRemove, onSave }: { vac: Vacation, pct: number, remaining: number, weeklyTarget: number | null, currency: 'JMD' | 'USD', onRemove: (id: string | number) => void, onSave: (id: string | number, amt: number) => void }) {
     const [amount, setAmount] = useState("");
     const [expand, setExpand] = useState(false);
     return (
