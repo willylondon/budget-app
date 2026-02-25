@@ -61,7 +61,7 @@ export function Dashboard() {
             {/* Empty State */}
             {transactions.length === 0 && (
                 <EmptyState
-                    title="Welcome to London Ledger!"
+                    title="Welcome to London's Ledger!"
                     description="You haven't added any transactions yet. Tap the '+' icon below to get started tracking your spending."
                 />
             )}
