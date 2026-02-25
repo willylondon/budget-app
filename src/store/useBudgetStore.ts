@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Transaction, Debt, Vacation, Currency } from '../types';
+import type { Transaction, Debt, Vacation, Subscription, Currency } from '../types';
 
 interface BudgetState {
     transactions: Transaction[];
     debts: Debt[];
     vacations: Vacation[];
+    subscriptions: Subscription[];
     currency: Currency;
 
     // Actions
@@ -20,15 +21,21 @@ interface BudgetState {
     removeVacation: (id: number) => void;
     addVacationSavings: (id: number, amount: number) => void;
 
+    addSubscription: (sub: Omit<Subscription, 'id' | 'isActive'>) => void;
+    removeSubscription: (id: number) => void;
+    toggleSubscription: (id: number) => void;
+    processSubscriptions: () => void; // Auto-logs transactions
+
     setCurrency: (currency: Currency) => void;
 }
 
 export const useBudgetStore = create<BudgetState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             transactions: [],
             debts: [],
             vacations: [],
+            subscriptions: [],
             currency: 'JMD',
 
             addTransaction: (tx) =>
@@ -94,6 +101,65 @@ export const useBudgetStore = create<BudgetState>()(
                             : v
                     ),
                 })),
+
+            addSubscription: (sub) =>
+                set((state) => ({
+                    subscriptions: [...state.subscriptions, { ...sub, id: Date.now(), isActive: true }],
+                })),
+
+            removeSubscription: (id) =>
+                set((state) => ({
+                    subscriptions: state.subscriptions.filter((s) => s.id !== id),
+                })),
+
+            toggleSubscription: (id) =>
+                set((state) => ({
+                    subscriptions: state.subscriptions.map((s) =>
+                        s.id === id ? { ...s, isActive: !s.isActive } : s
+                    ),
+                })),
+
+            processSubscriptions: () => {
+                const state = get();
+                const today = new Date().toISOString().slice(0, 10);
+                let addedTransactions = false;
+
+                const updatedSubs = state.subscriptions.map(sub => {
+                    if (sub.isActive && sub.nextDate <= today) {
+                        let currentNext = new Date(sub.nextDate);
+
+                        // Process all missed occurrences
+                        while (currentNext.toISOString().slice(0, 10) <= today) {
+                            // Log the transaction
+                            state.addTransaction({
+                                type: 'expense',
+                                name: sub.name,
+                                amount: sub.amount,
+                                category: sub.category,
+                                date: currentNext.toISOString().slice(0, 10),
+                                notes: 'Automated Subscription'
+                            });
+                            addedTransactions = true;
+
+                            // Advance the date
+                            if (sub.frequency === 'monthly') {
+                                currentNext.setMonth(currentNext.getMonth() + 1);
+                            } else if (sub.frequency === 'yearly') {
+                                currentNext.setFullYear(currentNext.getFullYear() + 1);
+                            } else if (sub.frequency === 'weekly') {
+                                currentNext.setDate(currentNext.getDate() + 7);
+                            }
+                        }
+
+                        return { ...sub, nextDate: currentNext.toISOString().slice(0, 10) };
+                    }
+                    return sub;
+                });
+
+                if (addedTransactions) {
+                    set({ subscriptions: updatedSubs });
+                }
+            },
 
             setCurrency: (currency) => set({ currency }),
         }),

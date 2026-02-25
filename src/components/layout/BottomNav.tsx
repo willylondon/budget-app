@@ -1,9 +1,10 @@
-import { LayoutGrid, PlusCircle, Receipt, Plane, Clock, Settings } from 'lucide-react';
+import { LayoutGrid, PlusCircle, Receipt, Plane, Clock, Settings, Repeat } from 'lucide-react';
 
 export const NAV_ITEMS = [
     { name: 'Dashboard', icon: <LayoutGrid size={24} /> },
     { name: 'Add Transaction', icon: <PlusCircle size={24} />, shortName: 'Add' },
     { name: 'Debt', icon: <Receipt size={24} /> },
+    { name: 'Subscriptions', icon: <Repeat size={24} />, shortName: 'Subs' },
     { name: 'Vacation', icon: <Plane size={24} /> },
     { name: 'History', icon: <Clock size={24} /> },
     { name: 'Settings', icon: <Settings size={24} /> },

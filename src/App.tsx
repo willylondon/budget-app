@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { AnimatePresence } from 'framer-motion';
 import { AppLayout } from './components/layout/AppLayout';
@@ -11,15 +11,23 @@ import { DebtPage } from './pages/Debt';
 import { VacationPage } from './pages/Vacation';
 import { History } from './pages/History';
 import { Settings } from './pages/Settings';
+import { Subscriptions } from './pages/Subscriptions';
+import { useBudgetStore } from './store/useBudgetStore';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageType>('Dashboard');
+  const processSubscriptions = useBudgetStore(state => state.processSubscriptions);
+
+  useEffect(() => {
+    processSubscriptions();
+  }, [processSubscriptions]);
 
   const renderPage = () => {
     switch (currentPage) {
       case 'Dashboard': return <Dashboard />;
       case 'Add Transaction': return <AddTransaction />;
       case 'Debt': return <DebtPage />;
+      case 'Subscriptions': return <Subscriptions />;
       case 'Vacation': return <VacationPage />;
       case 'History': return <History />;
       case 'Settings': return <Settings />;

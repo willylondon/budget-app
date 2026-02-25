@@ -33,4 +33,16 @@ export interface Vacation {
     notes?: string;
 }
 
+export type SubFrequency = 'monthly' | 'yearly' | 'weekly';
+
+export interface Subscription {
+    id: number;
+    name: string;
+    amount: number;
+    category: string;
+    frequency: SubFrequency;
+    nextDate: string;
+    isActive: boolean;
+}
+
 export type Currency = 'JMD' | 'USD';
