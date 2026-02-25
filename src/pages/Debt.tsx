@@ -96,7 +96,7 @@ export function DebtPage() {
                     : "↓ Smallest balance first — builds psychological momentum"}
             </div>
 
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {sorted.map((d, i) => (
                     <DebtCard
                         key={d.id}
@@ -107,8 +107,8 @@ export function DebtPage() {
                         onPayment={makeDebtPayment}
                     />
                 ))}
-                {debts.length === 0 && <div className="text-center py-8 text-sm text-textMuted">No debts tracked. Stay debt-free! 🎉</div>}
             </div>
+            {debts.length === 0 && <div className="text-center py-8 text-sm text-textMuted w-full">No debts tracked. Stay debt-free! 🎉</div>}
         </div>
     );
 }

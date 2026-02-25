@@ -10,15 +10,19 @@ interface AppLayoutProps {
 
 export function AppLayout({ children, currentPage, onPageChange }: AppLayoutProps) {
     return (
-        <div className="w-full max-w-[480px] mx-auto min-h-screen relative shadow-2xl bg-background outline outline-1 outline-surface shadow-black/50">
-            <Header title={currentPage} />
-
-            {/* Content Area with padding for header and bottom nav */}
-            <div className="px-4 pt-4 pb-28">
-                {children}
-            </div>
-
+        <div className="w-full min-h-screen relative bg-background flex">
+            {/* The Sidebar / BottomNav Component */}
             <BottomNav currentPage={currentPage} onPageChange={onPageChange} />
+
+            {/* Main Content Area: Shifts right on Desktop */}
+            <div className="flex-1 md:ml-64 flex flex-col min-h-screen">
+                <Header title={currentPage} />
+
+                {/* Content Area with padding for header and bottom nav */}
+                <div className="px-4 md:px-8 lg:px-12 pt-4 pb-28 md:pb-8 flex-1 max-w-7xl w-full mx-auto">
+                    {children}
+                </div>
+            </div>
         </div>
     );
 }

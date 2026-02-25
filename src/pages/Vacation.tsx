@@ -46,7 +46,7 @@ export function VacationPage() {
                 </Card>
             )}
 
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {vacations.map(v => {
                     const pct = v.goal > 0 ? (v.saved / v.goal) * 100 : 0;
                     const remaining = v.goal - v.saved;
@@ -59,8 +59,8 @@ export function VacationPage() {
                         <VacCard key={v.id} vac={v} pct={pct} remaining={remaining} weeklyTarget={weeklyTarget} currency={currency} onRemove={removeVacation} onSave={addVacationSavings} />
                     );
                 })}
-                {vacations.length === 0 && <div className="text-center py-8 text-sm text-textMuted">No vacation goals yet. Start dreaming! 🌴</div>}
             </div>
+            {vacations.length === 0 && <div className="text-center py-8 text-sm text-textMuted w-full">No vacation goals yet. Start dreaming! 🌴</div>}
         </div>
     );
 }

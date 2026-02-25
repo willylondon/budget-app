@@ -47,13 +47,13 @@ export function Dashboard() {
     ];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 max-w-[1200px] mx-auto">
             {/* Summary Cards */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
                 {cards.map(c => (
                     <Card key={c.label}>
                         <div className="text-xs mb-1 text-textMuted">{c.icon} {c.label}</div>
-                        <div className={`text-xl font-bold font-mono ${c.color}`}>{c.value}</div>
+                        <div className={`text-xl md:text-2xl lg:text-3xl font-bold font-mono ${c.color}`}>{c.value}</div>
                     </Card>
                 ))}
             </div>
@@ -61,69 +61,76 @@ export function Dashboard() {
             {/* Empty State */}
             {transactions.length === 0 && (
                 <EmptyState
-                    title="Welcome to London's Ledger!"
-                    description="You haven't added any transactions yet. Tap the '+' icon below to get started tracking your spending."
+                    title="Welcome to London's Ledger Pro!"
+                    description="You haven't added any transactions yet. Tap the '+' icon to get started tracking your spending."
                 />
             )}
 
-            {/* Spending Breakdown Pie Chart */}
-            {catData.length > 0 && (
-                <Card>
-                    <div className="text-sm font-semibold mb-3 text-textSecondary">Spending by Category</div>
-                    <div className="w-full h-[200px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie data={catData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={75} strokeWidth={0}>
-                                    {catData.map(entry => <Cell key={entry.name} fill={CAT_COLORS[entry.name]} />)}
-                                </Pie>
-                                <Tooltip
-                                    formatter={(v: any) => formatCurrency(Number(v), currency)}
-                                    contentStyle={{ background: "#1e293b", border: "none", borderRadius: "8px", color: "#e2e8f0" }}
-                                />
-                                <Legend wrapperStyle={{ fontSize: "11px", color: "#94a3b8" }} />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </div>
-                </Card>
-            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <div className="space-y-6">
+                    {/* 6-Month Overview Bar Chart */}
+                    <Card>
+                        <div className="text-sm font-semibold mb-3 text-textSecondary">6-Month Overview</div>
+                        <div className="w-full h-[220px] md:h-[280px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={last6} barSize={10} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                    <XAxis dataKey="label" tick={{ fill: "#64748b", fontSize: 11 }} axisLine={false} tickLine={false} />
+                                    <YAxis tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
+                                    <Tooltip
+                                        formatter={(v: any) => formatCurrency(Number(v), currency)}
+                                        contentStyle={{ background: "#1e293b", border: "none", borderRadius: "8px", color: "#e2e8f0" }}
+                                    />
+                                    <Bar dataKey="income" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                                    <Bar dataKey="expenses" fill="#f97316" radius={[4, 4, 0, 0]} />
+                                    <Legend wrapperStyle={{ fontSize: "11px", color: "#94a3b8" }} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </Card>
 
-            {/* 6-Month Overview Bar Chart */}
-            <Card>
-                <div className="text-sm font-semibold mb-3 text-textSecondary">6-Month Overview</div>
-                <div className="w-full h-[180px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={last6} barSize={10}>
-                            <XAxis dataKey="label" tick={{ fill: "#64748b", fontSize: 11 }} axisLine={false} tickLine={false} />
-                            <YAxis tick={{ fill: "#64748b", fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
-                            <Tooltip
-                                formatter={(v: any) => formatCurrency(Number(v), currency)}
-                                contentStyle={{ background: "#1e293b", border: "none", borderRadius: "8px", color: "#e2e8f0" }}
-                            />
-                            <Bar dataKey="income" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                            <Bar dataKey="expenses" fill="#f97316" radius={[4, 4, 0, 0]} />
-                            <Legend wrapperStyle={{ fontSize: "11px", color: "#94a3b8" }} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            </Card>
-
-            {/* Quick Vacation Summary */}
-            {vacations.length > 0 && (
-                <Card>
-                    <div className="text-sm font-semibold mb-3 text-textSecondary">✦ Vacation Funds</div>
-                    <div className="space-y-4">
-                        {vacations.map(v => (
-                            <div key={v.id}>
-                                <div className="flex justify-between text-sm mb-2">
-                                    <span className="text-textPrimary font-medium">{v.name}</span>
-                                    <span className="text-primary font-mono">{formatCurrency(v.saved, currency)} / {formatCurrency(v.goal, currency)}</span>
-                                </div>
-                                <ProgressBar value={v.saved} max={v.goal} color="#f97316" />
+                    {/* Quick Vacation Summary */}
+                    {vacations.length > 0 && (
+                        <Card>
+                            <div className="text-sm font-semibold mb-3 text-textSecondary">✦ Vacation Funds</div>
+                            <div className="space-y-4">
+                                {vacations.map(v => (
+                                    <div key={v.id}>
+                                        <div className="flex justify-between text-sm mb-2">
+                                            <span className="text-textPrimary font-medium">{v.name}</span>
+                                            <span className="text-primary font-mono">{formatCurrency(v.saved, currency)} / {formatCurrency(v.goal, currency)}</span>
+                                        </div>
+                                        <ProgressBar value={v.saved} max={v.goal} color="#f97316" />
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                </Card>
-            )}
+                        </Card>
+                    )}
+                </div>
+
+                {/* Right Column */}
+                <div className="space-y-6">
+                    {/* Spending Breakdown Pie Chart */}
+                    {catData.length > 0 && (
+                        <Card>
+                            <div className="text-sm font-semibold mb-3 text-textSecondary">Spending by Category</div>
+                            <div className="w-full h-[250px] md:h-[300px]">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie data={catData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} strokeWidth={0}>
+                                            {catData.map(entry => <Cell key={entry.name} fill={CAT_COLORS[entry.name]} />)}
+                                        </Pie>
+                                        <Tooltip
+                                            formatter={(v: any) => formatCurrency(Number(v), currency)}
+                                            contentStyle={{ background: "#1e293b", border: "none", borderRadius: "8px", color: "#e2e8f0" }}
+                                        />
+                                        <Legend wrapperStyle={{ fontSize: "11px", color: "#94a3b8" }} />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </Card>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }
