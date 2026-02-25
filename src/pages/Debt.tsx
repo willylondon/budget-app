@@ -117,7 +117,21 @@ function DebtCard({ debt, currency, rank, onRemove, onPayment }: { debt: Debt; c
     const [payment, setPayment] = useState("");
     const [expand, setExpand] = useState(false);
 
-    const orig = debt.paid + debt.balance;
+    const principalPaid = debt.paid - (debt.totalInterestPaid || 0);
+    const orig = principalPaid + debt.balance;
+
+    const calculatePayoffMonths = (balance: number, rate: number, payment: number) => {
+        if (balance <= 0) return 0;
+        if (payment <= 0) return null;
+        const monthlyRate = rate / 100 / 12;
+        if (monthlyRate === 0) return Math.ceil(balance / payment);
+        if (payment <= balance * monthlyRate) return null;
+        const months = -Math.log(1 - (monthlyRate * balance) / payment) / Math.log(1 + monthlyRate);
+        return Math.ceil(months);
+    };
+
+    const payoffMonths = calculatePayoffMonths(debt.balance, debt.rate, debt.minPayment);
+    const payoffText = payoffMonths === null ? "Never (Payment too low to cover interest)" : payoffMonths === 0 ? "Paid Off!" : `${payoffMonths} months`;
 
     return (
         <Card>
@@ -133,13 +147,14 @@ function DebtCard({ debt, currency, rank, onRemove, onPayment }: { debt: Debt; c
                 <button onClick={() => onRemove(debt.id)} className="text-xs px-2 py-1 rounded-lg bg-surface text-textMuted hover:bg-border transition-colors">✕</button>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 text-xs mb-3 text-textMuted">
-                <div>Rate: <span className="text-textPrimary">{debt.rate}%</span></div>
-                <div>Min: <span className="text-textPrimary">{formatCurrency(debt.minPayment, currency)}</span></div>
-                {debt.dueDate && <div>Due: <span className="text-textPrimary">{debt.dueDate}</span></div>}
+            <div className="grid grid-cols-2 gap-y-1 gap-x-2 text-xs mb-3 text-textMuted bg-surface rounded-lg p-2 border border-border">
+                <div>APR: <span className="text-textPrimary">{debt.rate}%</span></div>
+                <div>Min Pay: <span className="text-textPrimary">{formatCurrency(debt.minPayment, currency)}</span></div>
+                <div>Interest Paid: <span className="text-textPrimary">{formatCurrency(debt.totalInterestPaid || 0, currency)}</span></div>
+                <div>Est. Payoff: <span className="text-textPrimary">{payoffText}</span></div>
             </div>
 
-            <ProgressBar value={debt.paid} max={orig} color="#10b981" label={`Paid off: ${formatCurrency(debt.paid, currency)}`} />
+            <ProgressBar value={principalPaid} max={orig} color="#10b981" label={`Principal Paid: ${formatCurrency(principalPaid, currency)}`} />
 
             <button
                 onClick={() => setExpand(!expand)}

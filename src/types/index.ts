@@ -21,6 +21,7 @@ export interface Debt {
     minPayment: number;
     dueDate?: string;
     paid: number;
+    totalInterestPaid: number;
 }
 
 export interface Vacation {

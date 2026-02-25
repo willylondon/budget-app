@@ -12,7 +12,7 @@ interface BudgetState {
     addTransaction: (tx: Omit<Transaction, 'id'>) => void;
     removeTransaction: (id: number) => void;
 
-    addDebt: (debt: Omit<Debt, 'id' | 'paid'>) => void;
+    addDebt: (debt: Omit<Debt, 'id' | 'paid' | 'totalInterestPaid'>) => void;
     removeDebt: (id: number) => void;
     makeDebtPayment: (id: number, amount: number) => void;
 
@@ -43,7 +43,7 @@ export const useBudgetStore = create<BudgetState>()(
 
             addDebt: (debt) =>
                 set((state) => ({
-                    debts: [...state.debts, { ...debt, id: Date.now(), paid: 0 }],
+                    debts: [...state.debts, { ...debt, id: Date.now(), paid: 0, totalInterestPaid: 0 }],
                 })),
 
             removeDebt: (id) =>
@@ -53,15 +53,24 @@ export const useBudgetStore = create<BudgetState>()(
 
             makeDebtPayment: (id, amount) =>
                 set((state) => ({
-                    debts: state.debts.map((d) =>
-                        d.id === id
-                            ? {
+                    debts: state.debts.map((d) => {
+                        if (d.id === id) {
+                            // Calculate monthly interest based on APR and current balance
+                            const monthlyInterestRate = d.rate / 100 / 12;
+                            const interestForPeriod = d.balance * monthlyInterestRate;
+
+                            // Check how much of the payment goes to the principal
+                            const principalPayment = amount - interestForPeriod;
+
+                            return {
                                 ...d,
                                 paid: d.paid + amount,
-                                balance: Math.max(0, d.balance - amount),
-                            }
-                            : d
-                    ),
+                                totalInterestPaid: (d.totalInterestPaid || 0) + interestForPeriod,
+                                balance: Math.max(0, d.balance - principalPayment),
+                            };
+                        }
+                        return d;
+                    }),
                 })),
 
             addVacation: (vacation) =>
